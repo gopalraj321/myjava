@@ -19,21 +19,29 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean install'
+                dir('myjava') {
+                    sh 'mvn clean install'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('MySonar') {
-                    sh 'mvn sonar:sonar'
+                dir('myjava') {
+                    withSonarQubeEnv('MySonar') {
+                        sh 'mvn sonar:sonar'
+                    }
                 }
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deployment step (optional)'
+                dir('myjava/target') {
+                    // Assuming your artifact is my-java-app.jar; change if needed
+                    sh 'cp my-java-app-1.0.0.jar /home/gopalraj321/'
+                }
+                echo 'Artifact copied to /home/gopalraj321/'
             }
         }
     }
